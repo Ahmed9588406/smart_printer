@@ -45,5 +45,21 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Need access to photo library for selecting files to print</string>
+	<key>UISupportsDocumentBrowser</key>
+	<true/>
+	<key>LSSupportsOpeningDocumentsInPlace</key>
+	<true/>
+	<key>NSBluetoothAlwaysUsageDescription</key>
+	<string>Need Bluetooth access to scan for and connect to printers</string>
+	<key>NSBluetoothPeripheralUsageDescription</key>
+	<string>Need Bluetooth access to connect to printers</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>Need location access for WiFi information</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Need location access for WiFi information</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>Need location access for WiFi information</string>
 </dict>
 </plist>

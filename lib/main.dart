@@ -1,16 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:smart_printer/pages/home_page.dart';
 import 'package:smart_printer/pages/login_page.dart';
 import 'package:smart_printer/pages/profile_setup_page.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:smart_printer/services/bluetooth_service.dart';
 
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
+Future<void> main() async {
+  try {
+    await dotenv.load(fileName: ".env");
+  } catch (e) {
+    print('Error loading .env file: $e');
+    // Use fallback values or throw an error
+  }
 
   await Supabase.initialize(
-    url: 'https://qsarfqkjulypynvartdg.supabase.co',
-    anonKey:
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFzYXJmcWtqdWx5cHludmFydGRnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDUxODY4NTQsImV4cCI6MjA2MDc2Mjg1NH0.vztnqt3L94DksRw-rMZGJTFnlOJDs_RpwpBpjnPUrgI',
+    url: dotenv.env['SUPABASE_URL'] ?? '',
+    anonKey: dotenv.env['SUPABASE_ANON_KEY'] ?? '',
   );
 
   runApp(const MyApp());
@@ -53,6 +59,7 @@ class MyApp extends StatelessWidget {
         ),
       ),
       home: const AuthPage(),
+      navigatorKey: GlobalKey<NavigatorState>(),
     );
   }
 }

@@ -5,6 +5,7 @@ import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'login_page.dart';
 import 'package:smart_printer/main.dart';
 import 'profile.dart';
+import 'printers.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key, this.title = 'Smart Printer'}) : super(key: key);
@@ -26,9 +27,9 @@ class _HomePageState extends State<HomePage> {
 
   final List<Widget> _navigationItems = const [
     Icon(Icons.home, size: 30, color: Colors.white),
-    Icon(Icons.history, size: 30, color: Colors.white),
-    Icon(Icons.add_circle_outline, size: 30, color: Colors.white),
-    Icon(Icons.settings, size: 30, color: Colors.white),
+    Icon(Icons.print_rounded, size: 30, color: Colors.white),
+    Icon(Icons.add_to_drive_rounded, size: 30, color: Colors.white),
+    Icon(Icons.person, size: 30, color: Colors.white),
   ];
 
   @override
@@ -84,7 +85,7 @@ class _HomePageState extends State<HomePage> {
       case 0:
         return _buildHomePage();
       case 1:
-        return const Center(child: Text('History'));
+        return const BluetoothFileTransferPage();
       case 2:
         return const Center(child: Text('Buy Coins'));
       case 3:
@@ -95,196 +96,116 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _buildHomePage() {
-    return SingleChildScrollView(
-      physics: const AlwaysScrollableScrollPhysics(),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            // Profile Section
-            Card(
-              elevation: 4,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(15),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  children: [
-                    CircleAvatar(
-                      radius: 50,
-                      backgroundImage:
-                          _imageUrl != null ? NetworkImage(_imageUrl!) : null,
-                      child: _imageUrl == null
-                          ? const Icon(Icons.person, size: 50)
-                          : null,
-                    ),
-                    const SizedBox(height: 16),
-                    Text(
-                      '$_firstName $_lastName',
-                      style: const TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
+    return Center(
+      child: SingleChildScrollView(
+        physics: const AlwaysScrollableScrollPhysics(),
+        child: Container(
+          constraints: const BoxConstraints(maxWidth: 500), // Limit max width
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              // Profile Section
+              Card(
+                elevation: 4,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    children: [
+                      CircleAvatar(
+                        radius: 50,
+                        backgroundImage:
+                            _imageUrl != null ? NetworkImage(_imageUrl!) : null,
+                        child: _imageUrl == null
+                            ? const Icon(Icons.person, size: 50)
+                            : null,
                       ),
-                    ),
-                    const SizedBox(height: 8),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 8,
+                      const SizedBox(height: 16),
+                      Text(
+                        '$_firstName $_lastName',
+                        style: const TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).colorScheme.primary,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const Icon(
-                            Icons.monetization_on,
-                            color: Colors.white,
-                          ),
-                          const SizedBox(width: 8),
-                          Text(
-                            '$_coins Coins',
-                            style: const TextStyle(
+                      const SizedBox(height: 8),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 8,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.primary,
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(
+                              Icons.monetization_on,
                               color: Colors.white,
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
                             ),
-                          ),
-                        ],
+                            const SizedBox(width: 8),
+                            Text(
+                              '$_coins Coins',
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
-            ),
-            const SizedBox(height: 24),
-            // QR Code Section
-            Card(
-              elevation: 4,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(15),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  children: [
-                    const Text(
-                      'Your Printer ID',
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
+              const SizedBox(height: 24),
+              // QR Code Section
+              Card(
+                elevation: 4,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    children: [
+                      const Text(
+                        'Your Printer ID',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 16),
-                    QrImageView(
-                      data: _userId,
-                      version: QrVersions.auto,
-                      size: 200.0,
-                      backgroundColor: Colors.white,
-                    ),
-                    const SizedBox(height: 16),
-                    Text(
-                      'Scan this code at any Smart Printer\nto start printing',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: Colors.grey[600],
-                        fontSize: 16,
+                      const SizedBox(height: 16),
+                      QrImageView(
+                        data: _userId,
+                        version: QrVersions.auto,
+                        size: 200.0,
+                        backgroundColor: Colors.white,
                       ),
-                    ),
-                  ],
+                      const SizedBox(height: 16),
+                      Text(
+                        'Scan this code at any Smart Printer\nto start printing',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: Colors.grey[600],
+                          fontSize: 16,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
-            const SizedBox(height: 24),
-            // Quick Actions Section
-            Card(
-              elevation: 4,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(15),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      'Quick Actions',
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        _buildQuickActionButton(
-                          icon: Icons.add_circle_outline,
-                          label: 'Buy Coins',
-                          onTap: () {
-                            // TODO: Implement buy coins functionality
-                          },
-                        ),
-                        _buildQuickActionButton(
-                          icon: Icons.history,
-                          label: 'History',
-                          onTap: () {
-                            // TODO: Implement history functionality
-                          },
-                        ),
-                        _buildQuickActionButton(
-                          icon: Icons.settings,
-                          label: 'Settings',
-                          onTap: () {
-                            // TODO: Implement settings functionality
-                          },
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
-      ),
-    );
-  }
-
-  Widget _buildQuickActionButton({
-    required IconData icon,
-    required String label,
-    required VoidCallback onTap,
-  }) {
-    return InkWell(
-      onTap: onTap,
-      child: Column(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Icon(
-              icon,
-              color: Theme.of(context).colorScheme.primary,
-              size: 28,
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            label,
-            style: const TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-        ],
       ),
     );
   }
@@ -314,7 +235,7 @@ class _HomePageState extends State<HomePage> {
           _firstName = response['first_name'] ?? '';
           _lastName = response['last_name'] ?? '';
           _imageUrl = response['image_url'];
-          _coins = response['coins'] ?? 0;
+          _coins = response['coins'] ?? 30;
           _isLoading = false;
         });
       }
@@ -323,6 +244,7 @@ class _HomePageState extends State<HomePage> {
         setState(() {
           _isLoading = false;
         });
+        print('Error loading profile: $e');
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Error loading profile: $e'),
