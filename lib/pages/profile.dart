@@ -53,7 +53,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
           .from('user_profiles')
           .select()
           .eq('id', user.id)
-          .maybeSingle(); // Changed to maybeSingle() to handle non-existent profiles
+          .maybeSingle();
 
       if (response != null) {
         setState(() {
@@ -63,8 +63,12 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
           _phoneController.text = response['phone'] ?? '';
           _imageUrl = response['image_url'];
         });
+      } else {
+        // Initialize with default values for new users
+        _currentProfile = {'coins': '30'};
       }
     } catch (e) {
+      print('Error loading profile: $e'); // Debug log
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error loading profile: $e')),
       );
@@ -133,18 +137,16 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
       }
 
       final profileData = {
-        'id': user.id, // Ensure ID is set correctly
+        'id': user.id,
         'first_name': _firstNameController.text,
         'last_name': _lastNameController.text,
         'phone': _phoneController.text,
         'image_url': imageUrl,
-        'coins': _currentProfile?['coins'] ?? '30',
+        'coins': _currentProfile?['coins'] ??
+            '30', // Preserve existing coins or set default
       };
 
-      // Use upsert instead of insert/update
-      await _supabase
-          .from('user_profiles')
-          .upsert(profileData, onConflict: 'id');
+      await _supabase.from('user_profiles').upsert(profileData);
 
       setState(() {
         _isEditing = false;
@@ -267,11 +269,44 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                                       fit: BoxFit.cover,
                                     ),
                                   )
-                                : const Icon(
-                                    Icons.person,
-                                    size: 60,
-                                    color: Colors.grey,
-                                  ),
+                                : _imageUrl != null
+                                    ? ClipOval(
+                                        child: Image.network(
+                                          _imageUrl!,
+                                          width: 120,
+                                          height: 120,
+                                          fit: BoxFit.cover,
+                                          loadingBuilder: (context, child,
+                                              loadingProgress) {
+                                            if (loadingProgress == null)
+                                              return child;
+                                            return Center(
+                                              child: CircularProgressIndicator(
+                                                value: loadingProgress
+                                                            .expectedTotalBytes !=
+                                                        null
+                                                    ? loadingProgress
+                                                            .cumulativeBytesLoaded /
+                                                        loadingProgress
+                                                            .expectedTotalBytes!
+                                                    : null,
+                                              ),
+                                            );
+                                          },
+                                          errorBuilder:
+                                              (context, error, stackTrace) =>
+                                                  const Icon(
+                                            Icons.person,
+                                            size: 60,
+                                            color: Colors.grey,
+                                          ),
+                                        ),
+                                      )
+                                    : const Icon(
+                                        Icons.person,
+                                        size: 60,
+                                        color: Colors.grey,
+                                      ),
                           ),
                           FloatingActionButton.small(
                             onPressed: _pickImage,
